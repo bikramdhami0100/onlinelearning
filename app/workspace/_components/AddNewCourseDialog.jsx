@@ -21,9 +21,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader, Sparkle } from "lucide-react";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+import { useRouter } from "next/navigation";
 
 function AddNewCourseDialog({ children }) {
     const [loader,setLoader]=useState(false);
+    const router=useRouter();
     const [formData,setFormData]=useState({
         name:"",
         description:"",
@@ -44,14 +47,17 @@ function AddNewCourseDialog({ children }) {
 
     const onGenerateCourse=async()=>{
         setLoader(true);
-        console.log(formData)
+        const courseId=uuidv4();
       try{
-        const result=(await axios.post('/api/generate-course-layout',{...formData})).data;
+        const result=(await axios.post('/api/generate-course-layout',{...formData,courseId:courseId})).data;
         console.log(result,"result");
+        if(result?.success){
+            setLoader(false);
+            router.push(`/workspace/edit-course/${result?.courseId}`);
+        }
     }catch(error){
+      setLoader(false);
         console.log(error,"error")
-    }finally{
-        //  setLoader(false) ;
     }
     }
   return (
