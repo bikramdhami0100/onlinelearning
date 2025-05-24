@@ -1,19 +1,28 @@
 "use client"
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AddNewCourseDialog from './AddNewCourseDialog';
+import axios from 'axios';
+import { useUser } from '@clerk/nextjs';
+import CourseCard from './CourseCard';
 
 function CourseList() {
 const [courseList,setCourseList]=useState([]);
+const user=useUser();
+useEffect(()=>{
+   user&& GetCourseList();
+},[user])
+const GetCourseList=async()=>{
+    const result=(await axios.get('/api/courses')).data;
+    setCourseList(result?.result);
+    console.log(result)
+}
   return (
     <div>
          <h2 className='font-bold text-3xl' >Course List</h2>
-            { courseList?.length>0? courseList.map((course)=>(
-                <div key={course.id} className='border rounded-xl p-4 shadow-md'>
-                    <h3 className='font-bold text-xl'>{course.title}</h3>
-                    <p>{course.description}</p>
-                </div>
+            { courseList?.length>0? courseList.map((course,index)=>(
+                 <CourseCard key={index} course={course} />
             )):(<>
                <div className='flex flex-col items-center justify-center p-6 border rounded-xl bg-secondary'>
                    <Image className=' ' alt='online-educaition' height={100} width={100} src="/online-education.svg" />

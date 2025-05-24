@@ -1,12 +1,28 @@
+"use client"
 import { Button } from '@/components/ui/button';
-import { Book, Clock, Settings, TrendingUp } from 'lucide-react';
-import React from 'react';
+import axios from 'axios';
+import { Book, Clock, Loader, Settings, TrendingUp } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import { toast } from "sonner"
 
 function CourseInfo({ course }) {
   const courseLayout = course?.courseJson?.course;
-
-  const GenerateCourseContent=()=>{
-    
+ const [loader,setLoader]=useState(false);
+ const router=useRouter();
+  const GenerateCourseContent=async()=>{
+    setLoader(true);
+    try {
+         const response=(await axios.post('/api/generate-course-content',{courseId:course?.cid,courseTitle:course?.name,courseJson:courseLayout})).data;
+    console.log(response,"response");
+    toast.success("Content Generated")
+    setLoader(false);
+     router.push("/workspace")
+    } catch (error) {
+      console.log(error)
+      toast.error("Something went wrong")
+      setLoader(false); 
+    }
   }
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-6 rounded-2xl shadow-lg border bg-white">
@@ -48,9 +64,10 @@ function CourseInfo({ course }) {
           </div>
         </div>
 
-        <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white font-semibold text-lg py-2 mt-6 flex gap-2 items-center justify-center transition-all duration-300 rounded-xl shadow-md">
+        <Button onClick={GenerateCourseContent} className="w-full cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white font-semibold text-lg py-2 mt-6 flex gap-2 items-center justify-center transition-all duration-300 rounded-xl shadow-md">
+          {loader && <Loader className="mr-2 h-4 w-4 animate-spin" />}
           <Settings className="w-5 h-5" />
-          Generate Content
+           Generate Content
         </Button>
       </div>
 

@@ -22,15 +22,17 @@ schema:{
 "topics":["string"],
 "imagePrompt":"string"}]
 }} according to this schema bannerImagePrompt generate the slogan for the course and similarly according to imagePrompt generate the slogan for each chapter and place instead of bannerImagePrompt and imagePrompt,User Input:`
+
+export  const ai = new GoogleGenAI({
+      apiKey:process.env.GEMINI_API_KEY ,
+    });
 export async function POST(req) {
   // To run this code you need to install the following dependencies:
   // npm install @google/genai mime
   // npm install -D @types/node
 const {courseId, ...formData}=await req.json();
 const user=await currentUser();
-    const ai = new GoogleGenAI({
-      apiKey:process.env.GEMINI_API_KEY ,
-    });
+  
     const config = {
       responseMimeType: "text/plain",
     };
