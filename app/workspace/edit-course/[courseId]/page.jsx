@@ -7,6 +7,7 @@ import ChapterTopicList from '../_components/ChapterTopicList';
 
 function EditCoursePage({viewCourse=false}) {
     const {courseId}=useParams();
+   
     const [courseData,setCourseData]=useState();
     const [loader,setLoader]=useState(false);
     const getCourseData=async()=>{

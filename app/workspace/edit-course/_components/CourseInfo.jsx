@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { Book, Clock, Loader, PlayCircle, Settings, TrendingUp } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { toast } from "sonner"
@@ -9,6 +10,7 @@ import { toast } from "sonner"
 function CourseInfo({ course,viewCourse }) {
   const courseLayout = course?.courseJson?.course;
   console.log(courseLayout)
+  console.log(viewCourse)
  const [loader,setLoader]=useState(false);
  const router=useRouter();
   const GenerateCourseContent=async()=>{
@@ -71,12 +73,14 @@ function CourseInfo({ course,viewCourse }) {
          {
           !viewCourse ? (
             <Button onClick={GenerateCourseContent} className="w-full cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white font-semibold text-lg py-2 mt-6 flex gap-2 items-center justify-center transition-all duration-300 rounded-xl shadow-md">
-          {loader && <Loader className="mr-2 h-4 w-4 animate-spin" />}
-          <Settings className="w-5 h-5" />
-           Generate Content
-        </Button>
+             {loader && <Loader className="mr-2 h-4 w-4 animate-spin" />}
+             <Settings className="w-5 h-5" />
+            Generate Content
+            </Button>
           ):(<>
-           <Button className={ ` cursor-pointer w-full bg-blue-600`} ><PlayCircle className="w-5 h-5" /> Continue Learning</Button>
+         <Link href={`/course/${course?.cid}`}>
+         <Button className={ ` cursor-pointer w-full bg-blue-600`} ><PlayCircle className="w-5 h-5" /> Continue Learning</Button>
+         </Link>    
           </>)
          }
       </div>
