@@ -29,10 +29,20 @@ export async function POST(req) {
 
 export async function GET(req) {
     const user=await currentUser();
-    const result=await db.select().from(coursesTable)
-    .innerJoin(enrollCourseTable,eq(coursesTable.cid,enrollCourseTable.cid))
-    .where(eq(enrollCourseTable.userEmail,user?.primaryEmailAddress?.emailAddress))
-    .orderBy(desc(enrollCourseTable.id));
-    
-    return NextResponse.json({ message: "success",result:result });
+    const {searchParams} = new URL(req.url);
+    const courseId = searchParams.get("courseId");
+    if(courseId){
+        const result=await db.select().from(coursesTable).where( and( eq(coursesTable.cid,courseId),
+        eq(coursesTable.userEmail,user?.primaryEmailAddress?.emailAddress)
+        ));
+        return NextResponse.json({ message: "success",result:result[0] });
+    }else{
+
+        const result=await db.select().from(coursesTable)
+        .innerJoin(enrollCourseTable,eq(coursesTable.cid,enrollCourseTable.cid))
+        .where(eq(enrollCourseTable.userEmail,user?.primaryEmailAddress?.emailAddress))
+        .orderBy(desc(enrollCourseTable.id));
+        
+        return NextResponse.json({ message: "success",result:result });
+    }
 }
