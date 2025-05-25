@@ -1,13 +1,14 @@
 "use client"
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
-import { Book, Clock, Loader, Settings, TrendingUp } from 'lucide-react';
+import { Book, Clock, Loader, PlayCircle, Settings, TrendingUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { toast } from "sonner"
 
-function CourseInfo({ course }) {
+function CourseInfo({ course,viewCourse }) {
   const courseLayout = course?.courseJson?.course;
+  console.log(courseLayout)
  const [loader,setLoader]=useState(false);
  const router=useRouter();
   const GenerateCourseContent=async()=>{
@@ -24,6 +25,9 @@ function CourseInfo({ course }) {
       setLoader(false); 
     }
   }
+  
+  const match = courseLayout?.bannerImagePrompt?.match(/Slogan:\s*"([^"]+)"/);
+  const slogan = match ? match[1] : "";
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-6 rounded-2xl shadow-lg border bg-white">
       {/* Course Content */}
@@ -64,17 +68,23 @@ function CourseInfo({ course }) {
           </div>
         </div>
 
-        <Button onClick={GenerateCourseContent} className="w-full cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white font-semibold text-lg py-2 mt-6 flex gap-2 items-center justify-center transition-all duration-300 rounded-xl shadow-md">
+         {
+          !viewCourse ? (
+            <Button onClick={GenerateCourseContent} className="w-full cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white font-semibold text-lg py-2 mt-6 flex gap-2 items-center justify-center transition-all duration-300 rounded-xl shadow-md">
           {loader && <Loader className="mr-2 h-4 w-4 animate-spin" />}
           <Settings className="w-5 h-5" />
            Generate Content
         </Button>
+          ):(<>
+           <Button className={ ` cursor-pointer w-full bg-blue-600`} ><PlayCircle className="w-5 h-5" /> Continue Learning</Button>
+          </>)
+         }
       </div>
 
       {/* Banner Section */}
       <div className="flex-1 bg-gradient-to-br from-blue-600 to-purple-700 rounded-2xl shadow-2xl flex items-center justify-center p-6">
         <h2 className="text-white text-3xl font-bold text-center leading-snug animate-pulse">
-          {courseLayout?.bannerImagePrompt || 'Empower Your Learning Journey! 🚀'}
+          {slogan || 'Empower Your Learning Journey! 🚀'}
         </h2>
       </div>
     </div>

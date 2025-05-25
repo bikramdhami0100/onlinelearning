@@ -20,10 +20,9 @@ const GetCourseList=async()=>{
 }
   return (
     <div>
-         <h2 className='font-bold text-3xl' >Course List</h2>
-         <div className=' flex  min-w-2xs justify-center items-center gap-4'>
-          
-            { courseList?.length>0? courseList.map((course,index)=>(
+          <center className=' flex underline mb-4'><h2 className='font-bold text-4xl underline' >Course List</h2></center>
+         <div className=' grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-2  min-w-2xs  '>
+            { courseList?.length>0? courseList?.map((course,index)=>(
                  <CourseCard key={index} course={course} />
             )):(<>
                <div className='flex flex-col items-center justify-center p-6 border rounded-xl bg-secondary'>

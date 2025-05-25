@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
     >
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased hydrated`}
+          className={`${geistSans.variable} ${geistMono.variable}  hydrated`}
         >
           <Provider>
             {children}
