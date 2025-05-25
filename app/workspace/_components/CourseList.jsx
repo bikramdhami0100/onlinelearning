@@ -11,16 +11,18 @@ function CourseList() {
 const [courseList,setCourseList]=useState([]);
 const user=useUser();
 useEffect(()=>{
-   user&& GetCourseList();
+   GetCourseList();
 },[user])
 const GetCourseList=async()=>{
     const result=(await axios.get('/api/courses')).data;
     setCourseList(result?.result);
-    console.log(result)
+    // console.log(result)
 }
   return (
     <div>
          <h2 className='font-bold text-3xl' >Course List</h2>
+         <div className=' flex  min-w-2xs justify-center items-center gap-4'>
+          
             { courseList?.length>0? courseList.map((course,index)=>(
                  <CourseCard key={index} course={course} />
             )):(<>
@@ -31,10 +33,8 @@ const GetCourseList=async()=>{
                    <Button className={'cursor-pointer'}>+ Create New Course</Button>
                    </AddNewCourseDialog>
                </div>
-            </>)
-        
-        }
-       
+            </>) }
+        </div>
     </div>
   )
 }
