@@ -1,9 +1,45 @@
-import React from 'react'
+"use client"
+import React, { useContext } from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { SelectedChapterIndexContext } from "@/context/SelectedChapterIndexContext";
 
-function ChapterListSideBar() {
+function ChapterListSideBar({courseInfo}) {
+   const course=courseInfo?.courses;
+   const enrollCourse=courseInfo?.enrollCourse;
+   const courseContent=course?.courseContent;
+  // console.log(course,"this is data")
+  // console.log(courseContent,"this is enroll data")
+  const {selectedChapterIndex,setSelectedChapterIndex}=useContext(SelectedChapterIndexContext);
   return (
-    <div className=' w-80 bg-secondary h-screen'>ChapterListSideBar</div>
-  )
+    <div className=" w-80 bg-secondary h-screen">
+      <h2 className="text-2xl font-bold p-4">Chapters</h2>
+      <Accordion type="single" collapsible>
+        {
+          courseContent?.map((chapter,index)=>(
+            <AccordionItem
+              onClick={()=>setSelectedChapterIndex(index)}
+            value={chapter?.courseData?.chapterName} key={index}>
+          <AccordionTrigger>{index+1}. {chapter?.courseData?.chapterName}</AccordionTrigger>
+          <AccordionContent>
+             <div>
+                 {chapter?.courseData?.topics?.map((topic,index)=>(
+                  <div key={index} className="p-3 cursor-pointer hover:bg-slate-100 bg-white  my-1 rounded-lg">
+                    {index+1}. {topic?.topic}
+                  </div>
+                 ))}
+             </div>
+          </AccordionContent>
+        </AccordionItem>
+          ))
+        }
+      </Accordion>
+    </div>
+  );
 }
 
-export default ChapterListSideBar
+export default ChapterListSideBar;

@@ -31,18 +31,21 @@ export async function GET(req) {
     const user=await currentUser();
     const {searchParams} = new URL(req.url);
     const courseId = searchParams.get("courseId");
-    if(courseId){
-        const result=await db.select().from(coursesTable).where( and( eq(coursesTable.cid,courseId),
-        eq(coursesTable.userEmail,user?.primaryEmailAddress?.emailAddress)
-        ));
-        return NextResponse.json({ message: "success",result:result[0] });
+    if(!courseId){
+        const result=await db.select().from(coursesTable)
+        .innerJoin(enrollCourseTable,eq(coursesTable.cid,enrollCourseTable.cid))
+        .where( eq(enrollCourseTable.userEmail,user?.primaryEmailAddress?.emailAddress))
+        .orderBy(desc(enrollCourseTable.id));
+        return NextResponse.json({ message: "success",result:result });
     }else{
 
         const result=await db.select().from(coursesTable)
         .innerJoin(enrollCourseTable,eq(coursesTable.cid,enrollCourseTable.cid))
-        .where(eq(enrollCourseTable.userEmail,user?.primaryEmailAddress?.emailAddress))
+        .where( 
+        and(eq(coursesTable.cid,courseId),
+        eq(enrollCourseTable.userEmail,user?.primaryEmailAddress?.emailAddress)))
         .orderBy(desc(enrollCourseTable.id));
         
-        return NextResponse.json({ message: "success",result:result });
+        return NextResponse.json({ message: "success",result:result});
     }
 }

@@ -20,24 +20,20 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider
-      // frontendApi={CLERK_FRONTEND_API}
-      // navigate={(to) => router.push(to)}
-      options={{
-        // Clerk automatically compensates for clock skew in dev mode
-        developmentMode: process.env.NODE_ENV === "development",
-      }}
-    >
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable}  hydrated`}
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable}  `}>
+        <ClerkProvider
+          options={{
+            // Clerk automatically compensates for clock skew in dev mode
+            developmentMode: process.env.NODE_ENV === "development",
+          }}
         >
           <Provider>
             {children}
             <Toaster />
           </Provider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
