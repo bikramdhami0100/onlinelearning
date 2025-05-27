@@ -31,7 +31,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "drizzle.config.js"  ],
+, "drizzle.config.js", "app/workspace/profile/page.jsx"  ],
   "exclude": [
     "node_modules"
   ]

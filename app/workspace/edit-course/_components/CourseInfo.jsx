@@ -1,95 +1,123 @@
-"use client"
-import { Button } from '@/components/ui/button';
-import axios from 'axios';
-import { Book, Clock, Loader, PlayCircle, Settings, TrendingUp } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
-import { toast } from "sonner"
+"use client";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
+import {
+  Book,
+  Clock,
+  Loader,
+  PlayCircle,
+  Settings,
+  TrendingUp,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { toast } from "sonner";
 
-function CourseInfo({ course,viewCourse }) {
+function CourseInfo({ course, viewCourse }) {
   const courseLayout = course?.courseJson?.course;
-  console.log(courseLayout)
-  console.log(viewCourse)
- const [loader,setLoader]=useState(false);
- const router=useRouter();
-  const GenerateCourseContent=async()=>{
+  const [loader, setLoader] = useState(false);
+  const router = useRouter();
+
+  const GenerateCourseContent = async () => {
     setLoader(true);
     try {
-         const response=(await axios.post('/api/generate-course-content',{courseId:course?.cid,courseTitle:course?.name,courseJson:courseLayout})).data;
-    console.log(response,"response");
-    toast.success("Content Generated")
-    setLoader(false);
-     router.push("/workspace")
+      const response = (
+        await axios.post("/api/generate-course-content", {
+          courseId: course?.cid,
+          courseTitle: course?.name,
+          courseJson: courseLayout,
+        })
+      ).data;
+      toast.success("Content Generated");
+      router.push("/workspace");
     } catch (error) {
-      console.log(error)
-      toast.error("Something went wrong")
-      setLoader(false); 
+      console.log(error);
+      toast.error("Something went wrong");
+    } finally {
+      setLoader(false);
     }
-  }
-  
-  const match = courseLayout?.bannerImagePrompt?.match(/Slogan:\s*"([^"]+)"/);
+  };
+
+  // Extract slogan using improved regex
+  const match = courseLayout?.bannerImagePrompt?.match(
+    /\*\*Slogan:\*\*\s*\*?"([^"]+)"\*?/
+  );
   const slogan = match ? match[1] : "";
+
   return (
-    <div className="flex flex-col lg:flex-row gap-6 p-6 rounded-2xl shadow-lg border bg-white">
-      {/* Course Content */}
-      <div className="flex-1 bg-white rounded-2xl p-8 space-y-6 animate-fadeIn">
-        <h2 className="text-4xl font-extrabold bg-gradient-to-r from-indigo-600 to-pink-600  text-transparent bg-clip-text">
+    <div className="flex flex-col lg:flex-row gap-8 p-8 rounded-3xl shadow-xl border bg-white animate-fadeIn">
+      {/* Left Side: Course Info */}
+      <div className="flex-1 bg-white rounded-2xl p-6 space-y-6">
+        <h2 className="text-4xl font-extrabold bg-gradient-to-r from-indigo-600 to-pink-600 text-transparent bg-clip-text">
           {courseLayout?.name}
         </h2>
+
         <p className="text-gray-700 text-lg leading-relaxed">
           {courseLayout?.description}
         </p>
 
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-          {/* Duration */}
-          <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl hover:bg-blue-100 transition-all duration-300 transform hover:scale-105">
-            <Clock className="text-blue-600 w-8 h-8" />
-            <div>
-              <h3 className="font-semibold text-gray-800">Duration</h3>
-              <p className="text-blue-600">2 hours</p>
-            </div>
-          </div>
-
-          {/* Chapters */}
-          <div className="flex items-start gap-3 p-4 bg-green-50 rounded-xl hover:bg-green-100 transition-all duration-300 transform hover:scale-105">
-            <Book className="text-green-600 w-8 h-8" />
-            <div>
-              <h3 className="font-semibold text-gray-800">Chapters</h3>
-              <p className="text-green-600">3 chapters</p>
-            </div>
-          </div>
-
-          {/* Difficulty */}
-          <div className="flex items-start gap-3 p-4 bg-red-50 rounded-xl hover:bg-red-100 transition-all duration-300 transform hover:scale-105">
-            <TrendingUp className="text-red-600 w-8 h-8" />
-            <div>
-              <h3 className="font-semibold text-gray-800">Difficulty</h3>
-              <p className="text-red-600">{courseLayout?.level}</p>
-            </div>
-          </div>
+        {/* Course Stats */}
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5 mt-4">
+          <StatCard
+            icon={<Clock className="text-blue-600 w-7 h-7" />}
+            title="Duration"
+            value="2 hours"
+            bg="blue"
+          />
+          <StatCard
+            icon={<Book className="text-green-600 w-7 h-7" />}
+            title="Chapters"
+            value={`${courseLayout?.chapters?.length || 3} chapters`}
+            bg="green"
+          />
+          <StatCard
+            icon={<TrendingUp className="text-red-600 w-7 h-7" />}
+            title="Difficulty"
+            value={courseLayout?.level || "Beginner"}
+            bg="red"
+          />
         </div>
 
-         {
-          !viewCourse ? (
-            <Button onClick={GenerateCourseContent} className="w-full cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white font-semibold text-lg py-2 mt-6 flex gap-2 items-center justify-center transition-all duration-300 rounded-xl shadow-md">
-             {loader && <Loader className="mr-2 h-4 w-4 animate-spin" />}
-             <Settings className="w-5 h-5" />
+        {/* Action Button */}
+        {!viewCourse ? (
+          <Button
+            onClick={GenerateCourseContent}
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold text-lg py-2 mt-8 flex gap-2 items-center justify-center transition-all duration-300 rounded-xl shadow-lg"
+          >
+            {loader && <Loader className="mr-2 h-4 w-4 animate-spin" />}
+            <Settings className="w-5 h-5" />
             Generate Content
+          </Button>
+        ) : (
+          <Link href={`/course/${course?.cid}`}>
+            <Button className="w-full cursor-pointer bg-blue-600 text-white mt-8 hover:bg-blue-700">
+              <PlayCircle className="w-5 h-5 mr-2" />
+              Continue Learning
             </Button>
-          ):(<>
-         <Link href={`/course/${course?.cid}`}>
-         <Button className={ ` cursor-pointer w-full bg-blue-600`} ><PlayCircle className="w-5 h-5" /> Continue Learning</Button>
-         </Link>    
-          </>)
-         }
+          </Link>
+        )}
       </div>
 
-      {/* Banner Section */}
-      <div className="flex-1 bg-gradient-to-br from-blue-600 to-purple-700 rounded-2xl shadow-2xl flex items-center justify-center p-6">
-        <h2 className="text-white text-3xl font-bold text-center leading-snug animate-pulse">
-          {slogan || 'Empower Your Learning Journey! 🚀'}
-        </h2>
+   
+    </div>
+  );
+}
+
+function StatCard({ icon, title, value, bg }) {
+  const colorMap = {
+    blue: "bg-blue-50 hover:bg-blue-100",
+    green: "bg-green-50 hover:bg-green-100",
+    red: "bg-red-50 hover:bg-red-100",
+  };
+  return (
+    <div
+      className={`flex items-start gap-3 p-4 ${colorMap[bg]} rounded-xl transition-all duration-300 transform hover:scale-105`}
+    >
+      {icon}
+      <div>
+        <h3 className="font-semibold text-gray-800">{title}</h3>
+        <p className={`text-${bg}-600 font-medium`}>{value}</p>
       </div>
     </div>
   );

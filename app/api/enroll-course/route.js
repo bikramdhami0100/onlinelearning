@@ -49,3 +49,31 @@ export async function GET(req) {
         return NextResponse.json({ message: "success",result:result});
     }
 }
+
+// export async function DELETE(req) {
+//     const {courseId}=await req.json();
+//     const user=await currentUser();
+//     const result=await db.delete(enrollCourseTable).where(
+//         and(
+//             eq(enrollCourseTable.cid,courseId),
+//             eq(enrollCourseTable.userEmail,user?.primaryEmailAddress?.emailAddress)
+//         )
+//     );
+//     return NextResponse.json({ message: "success",result:result });
+// }
+
+export async function PUT(req) {
+    const {courseId,completedChapters}=await req.json();
+    const user=await currentUser();
+
+    const result=await db.update(enrollCourseTable).set({
+        completedChapters:completedChapters
+    }).where(
+        and(
+            eq(enrollCourseTable.cid,courseId),
+            eq(enrollCourseTable.userEmail,user?.primaryEmailAddress?.emailAddress)
+        )
+    ).returning(enrollCourseTable);
+    console.log(result,"result");
+    return NextResponse.json({ message: "success",result:result });
+}

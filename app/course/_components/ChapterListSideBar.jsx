@@ -12,6 +12,7 @@ function ChapterListSideBar({courseInfo}) {
    const course=courseInfo?.courses;
    const enrollCourse=courseInfo?.enrollCourse;
    const courseContent=course?.courseContent;
+     const completedChapter=enrollCourse?.completedChapters??[];
   // console.log(course,"this is data")
   // console.log(courseContent,"this is enroll data")
   const {selectedChapterIndex,setSelectedChapterIndex}=useContext(SelectedChapterIndexContext);
@@ -24,12 +25,12 @@ function ChapterListSideBar({courseInfo}) {
             <AccordionItem
               onClick={()=>setSelectedChapterIndex(index)}
             value={chapter?.courseData?.chapterName} key={index}>
-          <AccordionTrigger>{index+1}. {chapter?.courseData?.chapterName}</AccordionTrigger>
+          <AccordionTrigger className={` ${completedChapter?.includes(index)?" text-green-600":""}  cursor-pointer`}>{index+1}. {chapter?.courseData?.chapterName}</AccordionTrigger>
           <AccordionContent>
              <div>
-                 {chapter?.courseData?.topics?.map((topic,index)=>(
-                  <div key={index} className="p-3 cursor-pointer hover:bg-slate-100 bg-white  my-1 rounded-lg">
-                    {index+1}. {topic?.topic}
+                 {chapter?.courseData?.topics?.map((topic,_index)=>(
+                  <div key={_index} className={` ${completedChapter?.includes(index)?"bg-slate-200  text-green-600":" bg-white"}  p-3 cursor-pointer hover:bg-slate-100   my-1 rounded-lg`}>
+                    {_index+1}. {topic?.topic}
                   </div>
                  ))}
              </div>

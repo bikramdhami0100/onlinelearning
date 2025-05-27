@@ -35,7 +35,7 @@ function Course() {
 
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto p-6 bg-white rounded-tl-2xl shadow-inner">
-          <ChapterContent courseInfo={courseInfo} />
+          <ChapterContent courseInfo={courseInfo} refreshData={()=>GetEnrollCourseById()} />
         </div>
       </div>
     </div>

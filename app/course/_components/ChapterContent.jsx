@@ -1,21 +1,65 @@
 "use client"
+import { Button } from '@/components/ui/button';
 import { SelectedChapterIndexContext } from '@/context/SelectedChapterIndexContext';
-import React, { useContext } from 'react'
+import axios from 'axios';
+import { CheckCircle, Loader, X } from 'lucide-react';
+import React, { useContext, useState } from 'react'
 import YouTube from 'react-youtube';
+import { toast } from 'sonner';
 
-function ChapterContent({courseInfo}) {
+function ChapterContent({courseInfo,refreshData}) {
   const course=courseInfo?.courses;
   const {selectedChapterIndex,setSelectedChapterIndex}=useContext(SelectedChapterIndexContext);
+  const [loading,setLoading]=useState(false);
    const enrollCourse=courseInfo?.enrollCourse;
    const courseContent=course?.courseContent;
+   console.log(enrollCourse,"this is enroll course")
   //  console.log(courseContent,"courseContent");
    const videoData=courseContent?.[selectedChapterIndex]?.youtubeVideo;
    const topics=courseContent?.[selectedChapterIndex]?.courseData?.topics;
   //  console.log(courseData,"videoData");
+  const completedChapter=enrollCourse?.completedChapters??[];
+const markChapterCompleted=async()=>{
+  //  if(completedChapter?.length==0){
+  setLoading(true);
+    completedChapter?.push(selectedChapterIndex);
+    const result=await axios.put("/api/enroll-course",{courseId:course?.cid,completedChapters:completedChapter}).data;
+    console.log(result,"client result completed ")
+    refreshData();
+    toast.success("Chapter Marked Completed")
+  //  }
+  setLoading(false);
+}
 
+const markInCompleteChapter=async()=>{
+  //  if(completedChapter?.length==0){
+  setLoading(true);
+  const completedChap=completedChapter?.filter(item=>item!=selectedChapterIndex);
+    completedChapter?.push(selectedChapterIndex);
+    const result=await axios.put("/api/enroll-course",{courseId:course?.cid,completedChapters:completedChap}).data;
+    console.log(result,"client result completed ")
+    refreshData();
+    toast.success("Chapter Marked Incompleted")
+  //  }
+  setLoading(false);
+}
   return (
     <div>
+         <div className=' flex justify-between items-center'>
          <h2 className="text-2xl font-bold p-4"> {selectedChapterIndex+1}. {courseContent?.[selectedChapterIndex]?.courseData?.chapterName}</h2>
+         {
+          !completedChapter?.includes(selectedChapterIndex)?<>
+              <Button 
+              className={"bg-blue-600 cursor-pointer"}
+            onClick={markChapterCompleted}
+          >  {loading ?<Loader className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle className="w-5 h-5" />}
+              Mark as Completed</Button>
+          </>:<>
+            <Button variant={"outline"} onClick={markInCompleteChapter}>{loading ?<Loader className="mr-2 h-4 w-4 animate-spin" /> : <X className="w-5 h-5" />}Mark Incompleted</Button>
+          </>
+         }
+         </div>
+
          <h2 className='text-2xl font-bold p-4'>Related video </h2>
          <div className=' grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
              {

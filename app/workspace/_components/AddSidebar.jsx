@@ -42,7 +42,7 @@ import AddNewCourseDialog from "./AddNewCourseDialog";
     {
        title:'Profile',
        icon:UserCircle2Icon,
-       path:'/#'
+       path:'/workspace/profile'
     }
   ]
   return (

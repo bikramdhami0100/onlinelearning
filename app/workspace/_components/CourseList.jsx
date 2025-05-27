@@ -18,6 +18,7 @@ const GetCourseList=async()=>{
     setCourseList(result?.result);
     // console.log(result)
 }
+
   return (
     <div>
           <center className=' flex underline mb-4'><h2 className='font-bold text-4xl underline' >Course List</h2></center>
@@ -25,7 +26,7 @@ const GetCourseList=async()=>{
             { courseList?.length>0? courseList?.map((course,index)=>(
                  <CourseCard key={index} course={course} />
             )):(<>
-               <div className='flex flex-col items-center justify-center p-6 border rounded-xl bg-secondary'>
+               <div className='flex  flex-col items-center justify-center p-6 borde self-center text-center container rounded-xl bg-secondary'>
                    <Image className=' ' alt='online-educaition' height={100} width={100} src="/online-education.svg" />
                    <h2 className='text-2xl font-bold  gap-1 my-2 '> No Courses Found</h2>
                    <AddNewCourseDialog>
